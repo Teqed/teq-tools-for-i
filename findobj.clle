@@ -1,3 +1,8 @@
-PGM
+PGM PARM(&obj &lib &type &rtn)
+/* CL procedure for finding object. Returns output. */
+DCL VAR(&obj) TYPE(*CHAR) LEN(10)
+DCL VAR(&lib) TYPE(*CHAR) LEN(10)
+DCL VAR(&type) TYPE(*CHAR) LEN(10)
+DCL VAR(&rtn) TYPE(*LGL)
 
 ENDPGM
