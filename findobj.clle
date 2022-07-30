@@ -15,8 +15,8 @@ DOUNTIL &DOU
     IF COND(&lib *EQ ' ') THEN(CHGVAR &lib '*LIBL')
     IF COND(&type *EQ ' ') THEN(CHGVAR &type '*FILE')
     CALLSUBR SUBR(FINDOBJ) RTNVAL(&subr0)
-    IF &subr0 THEN(CHGVAR &rtn 1)
-    ELSE CMD(CHGVAR &rtn 0))
+    IF COND(&subr0 *EQ 1) THEN(CHGVAR &rtn '1')
+    ELSE CMD(CHGVAR &rtn '0')
 ENDDO
 /*****************************************************************************/
 /* Subroutines ***************************************************************/
