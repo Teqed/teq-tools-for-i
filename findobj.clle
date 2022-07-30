@@ -1,29 +1,25 @@
 PGM PARM(&obj &lib &type &rtn)
-/* CL procedure for finding object. Returns output. */
+/* CL procedure for finding object. Returns true if object found. */
 /* Variables *****************************************************************/
 DCL VAR(&obj) TYPE(*CHAR) LEN(10) /* Object name */
 DCL VAR(&lib) TYPE(*CHAR) LEN(10) /* Library qualifer */
 DCL VAR(&type) TYPE(*CHAR) LEN(10) /* Type of object ex. *FILE */
 DCL VAR(&rtn) TYPE(*LGL) /* The return value for calling program */
-DCL VAR(&subr0) TYPE(*INT) LEN(4) /* The return value for subroutines */
-DCL VAR(&DOU) TYPE(*LGL) VALUE('1') /* We'll want to LEAVE DO...ENDDO, +
-    so we have to use DOUNTIL...ENDDO instead. */
+DCL VAR(&DOU) TYPE(*LGL) VALUE('1') /* We'll want to LEAVE so we can't use +
+    DO...ENDDO and have to use DO...UNTIL instead. 'GOTO <label>' works too. */
 /*****************************************************************************/
 /* Program Mainline **********************************************************/
 DOUNTIL &DOU
     IF COND(&obj *EQ ' ') THEN(LEAVE)
     IF COND(&lib *EQ ' ') THEN(CHGVAR &lib '*LIBL')
     IF COND(&type *EQ ' ') THEN(CHGVAR &type '*FILE')
-    CALLSUBR SUBR(FINDOBJ) RTNVAL(&subr0)
-    IF COND(&subr0 *EQ 1) THEN(CHGVAR &rtn '1')
-    ELSE CMD(CHGVAR &rtn '0')
+    CHKOBJ OBJ(&lib/&obj) OBJTYPE(&type)
+    MONMSG MSGID(CPF9801 CPF9810) EXEC(DO)
+        CHGVAR &rtn '0'
+        LEAVE
+        ENDDO
+    CHGVAR &rtn '1'
 ENDDO
 /*****************************************************************************/
-/* Subroutines ***************************************************************/
-SUBR SUBR(FINDOBJ)
-    CHKOBJ OBJ(&lib/&obj) OBJTYPE(&type)
-    MONMSG MSGID(CPF9801 CPF9810) EXEC(RTNSUBR RTNVAL(0))
-    RTNSUBR RTNVAL(1)
-ENDSUBR
-/*****************************************************************************/
+ENDPGM: /* Prevent CPD0791 */
 ENDPGM
