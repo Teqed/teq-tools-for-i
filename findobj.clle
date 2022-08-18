@@ -6,9 +6,11 @@ DCL VAR(&lib) TYPE(*CHAR) LEN(10) /* Library qualifer */
 DCL VAR(&type) TYPE(*CHAR) LEN(10) /* Type of object ex. *FILE */
 DCL VAR(&rtn) TYPE(*LGL) /* The return value for calling program */
 DCL VAR(&subr0) TYPE(*INT) LEN(4) /* The return value for subroutines */
+DCL VAR(&test) TYPE(*CHAR) LEN(4) /* test */
 DCL VAR(&DOU) TYPE(*LGL) VALUE('1') /* We'll want to LEAVE DO...ENDDO, +
     so we have to use DOUNTIL...ENDDO instead. */
 /*****************************************************************************/
+CHGVAR &test 'test'
 /* Program Mainline **********************************************************/
 DOUNTIL &DOU
     IF COND(&obj *EQ ' ') THEN(LEAVE)
