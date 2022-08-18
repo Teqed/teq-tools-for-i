@@ -10,9 +10,13 @@ Accepts parameters for the `CHKOBJ OBJ(&lib/&obj) OBJTYPE(&type)` command, monit
 
 # sqlexist.clle
 CL procedure for checking the existence of SQL records using `RUNSQL SQL(&statement)`.
+
 Creates a temporary view and writes a record if the selection criteria finds any results, then reads the view to see if any SQL records were found.
+
 Normally, using RUNSQL in CL doesn't give you access to any of the results, so writing to a temporay view and using RCVF is a roundabout way of accomplishing what we're looking for.
+
 I'm not especially pleased with this method, especially since CL requires physical files to exist *at compile time* so that they can retrieve their columns and assign them as variables. This means that (unless you get creative) you can't use files that you want to exist in QTEMP, and you have to create (potentially empty) physical files in your development environment to compile the program, which may be dropped again every time you run the program.
+
 Instead of continuing down this route of creating wrappers for RUNSQL in CL, I'm exploring some other methods of accessing DB2 on IBMi, like ODBC, which may be seen in other projects.
 
 # testpgm.clle
