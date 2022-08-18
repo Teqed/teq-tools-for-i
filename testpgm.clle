@@ -1,0 +1,18 @@
+PGM PARM(&input0 &input1 &input2)
+/* I'm a program that tests other programs that use return values. */
+DCL VAR(&input0) TYPE(*CHAR) /* Input value from user */
+DCL VAR(&input1) TYPE(*CHAR) /* Input value from user */
+DCL VAR(&input2) TYPE(*CHAR) /* Input value from user */
+DCL VAR(&rtn) TYPE(*LGL) VALUE('0') /* The return value for calling program */
+CALLPRC PRC(SQLEXIST) PARM((&input0 *BYREF (*CHAR 10)) (&input1 *BYREF (*CHAR 10)) +
+ (&input1 *BYREF (*CHAR 10)) (&input1 *BYREF (*CHAR 10)) (&input1 *BYREF (*CHAR 10)) +
+  (&input1 *BYREF (*CHAR 10)) (&input1 *BYREF (*CHAR 10)) (&input1 *BYREF (*CHAR 10)) +
+   (&input1 *BYREF (*CHAR 10)) )
+/* &obj &lib &col0 &val0 &col1 &val1 &col2 &val2 &rtn */
+/* SQLEXIST OBJ(&input0) COL0(&input1) VAL0(&input2) RTN(&rtn) */
+IF &rtn THEN(DO)
+SNDPGMMSG MSG('Your return number is 1')
+ENDDO
+ELSE CMD(SNDPGMMSG MSG('Your return number is 0'))
+ENDPGM: /* Prevent CPD0791 */
+ENDPGM

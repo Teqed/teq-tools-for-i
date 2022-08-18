@@ -1,0 +1,45 @@
+PGM PARM(&obj &lib &col0 &val0 &col1 &val1 &col2 &val2 &rtn)
+/* CL procedure for checking the existence of SQL records. */
+/* Variables *****************************************************************/
+DCL VAR(&obj) TYPE(*CHAR) LEN(10) /* Object name */
+DCL VAR(&lib) TYPE(*CHAR) LEN(10) /* Library qualifer */
+DCL VAR(&col0) TYPE(*CHAR) LEN(10) /* Column 0 */
+DCL VAR(&col1) TYPE(*CHAR) LEN(10) /* Column 1 */
+DCL VAR(&col2) TYPE(*CHAR) LEN(10) /* Column 2 */
+DCL VAR(&val0) TYPE(*CHAR) LEN(10) /* Value 0 */
+DCL VAR(&val1) TYPE(*CHAR) LEN(10) /* Value 1 */
+DCL VAR(&val2) TYPE(*CHAR) LEN(10) /* Value 2 */
+DCL VAR(&rtn) TYPE(*LGL) /* The return value for calling program */
+DCL VAR(&EOF) TYPE(*LGL) /* End of File indicator */
+DCL VAR(&sqlstmt) TYPE(*CHAR) LEN(1000) /* SQL statement */
+DCLF FILE(teq1/tmpview) OPNID(tmpview)
+/*****************************************************************************/
+/* Program Mainline **********************************************************/
+IF COND(&lib *NE ' ') THEN(CHGVAR VAR(&obj) VALUE(&lib *TCAT '.' *TCAT &obj))
+RUNSQL SQL('drop view if exists teq1.tmpview') COMMIT(*NONE)
+CHGVAR VAR(&sqlstmt) VALUE( +
+'create view teq1.tmpview as +
+(select 1 as col from' *BCAT &obj *BCAT 'where' +
+*BCAT &col0 *TCAT '=''' *TCAT &val0 *TCAT '''')
+IF COND(&col1 *NE ' ') THEN(DO)
+    CHGVAR VAR(&sqlstmt) VALUE(&sqlstmt +
+    *BCAT 'and' *BCAT &col1 *TCAT '=' *TCAT &val1)
+    IF COND(&col2 *NE ' ') THEN(DO)
+    CHGVAR VAR(&sqlstmt) VALUE(&sqlstmt +
+    *BCAT 'and' *BCAT &col2 *TCAT '=' *TCAT &val2)
+    ENDDO 
+ENDDO
+CHGVAR VAR(&sqlstmt) VALUE(&sqlstmt +
+*TCAT ') RcdFmt tmpviewF')
+RUNSQL SQL(&sqlstmt) COMMIT(*NONE)
+DOUNTIL COND(&EOF *EQ '1')
+    RCVF RCDFMT(tmpviewF) OPNID(tmpview)
+    MONMSG MSGID(CPF0864) EXEC(CHGVAR &EOF '1')
+    ENDDO
+CLOSE OPNID(tmpview)
+/* RUNSQL SQL('drop view if exists teq1.tmpview') COMMIT(*NONE) */
+IF COND(&tmpview_col = 1) THEN(CHGVAR &rtn '1')
+    ELSE CMD(CHGVAR &rtn '0')
+/*****************************************************************************/
+ENDPGM: /* Prevent CPD0791 */
+ENDPGM
